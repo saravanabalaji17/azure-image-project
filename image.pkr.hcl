@@ -4,8 +4,13 @@ packer {
       source  = "github.com/hashicorp/azure"
       version = ">= 1.0.0"
     }
+    ansible = {
+      source  = "github.com/hashicorp/ansible"
+      version = ">= 1.0.0"
+    }
   }
 }
+
 
 # -----------------------------
 # Variables (from GitHub Secrets)
