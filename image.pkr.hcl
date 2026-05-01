@@ -7,44 +7,84 @@ packer {
   }
 }
 
-variable "client_id" {}
-variable "client_secret" {}
-variable "tenant_id" {}
-variable "subscription_id" {}
-
-locals {
-  #image_version = "1.0.${env("GITHUB_RUN_NUMBER")}"
-  image_version = "1.0.0"
+# -----------------------------
+# Variables (from GitHub Secrets)
+# -----------------------------
+variable "client_id" {
+  type = string
 }
 
+variable "client_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "tenant_id" {
+  type = string
+}
+
+variable "subscription_id" {
+  type = string
+}
+
+#  IMPORTANT: must exist (fix for your error)
+variable "image_version" {
+  type = string
+}
+
+# -----------------------------
+# Azure Image Source
+# -----------------------------
 source "azure-arm" "ubuntu" {
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
   subscription_id = var.subscription_id
 
-  location = "East US"
+  # Keep region consistent with your SIG
+  location = "West US"
   vm_size  = "Standard_B2s"
+
+ # os_type         = "Linux"
+ # image_publisher = "canonical"
+ # image_offer     = "0001-com-ubuntu-server-jammy"
+ # image_sku       = "22_04-lts"
+
 
   os_type         = "Linux"
   image_publisher = "canonical"
   image_offer     = "ubuntu-24_04-lts"
-  image_sku       = "server"
+  image_sku       = "server"  
 
+# (24.04 sometimes fails in some regions → 22.04 is stable)
+
+  # Temporary managed image
   managed_image_resource_group_name = "packer-rg"
-  managed_image_name                = "temp-image-${local.image_version}"
+  managed_image_name                = "temp-image-${var.image_version}"
 
+  # Shared Image Gallery (SIG)
   shared_image_gallery_destination {
     subscription   = var.subscription_id
     resource_group = "1-7935f0a2-playground-sandbox"
     gallery_name   = "vsphere_gallery"
     image_name     = "balaji"
-    image_version  = local.image_version
-    replication_regions = ["East US"]
+    image_version  = var.image_version
+
+    replication_regions = ["West US"]
+  }
+
+  # Optional but recommended
+  azure_tags = {
+    environment = "dev"
+    created_by  = "packer"
   }
 }
 
+# -----------------------------
+# Build Block
+# -----------------------------
 build {
+  name    = "azure-ubuntu-image"
   sources = ["source.azure-arm.ubuntu"]
 
   # Required for Ansible
@@ -55,6 +95,7 @@ build {
     ]
   }
 
+  # Run your Ansible playbook
   provisioner "ansible" {
     playbook_file = "./ansible/playbook.yml"
   }
