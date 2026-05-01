@@ -9,7 +9,6 @@ jobs:
 build-image:
 runs-on: ubuntu-latest
 
-```
 env:
   PACKER_LOG: "1"
 
@@ -49,4 +48,3 @@ steps:
         -var "subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
         -var "image_version=1.0.${{ github.run_number }}" \
         image.pkr.hcl
-```
