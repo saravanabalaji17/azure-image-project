@@ -13,7 +13,8 @@ variable "tenant_id" {}
 variable "subscription_id" {}
 
 locals {
-  image_version = "1.0.${env("GITHUB_RUN_NUMBER")}"
+  #image_version = "1.0.${env("GITHUB_RUN_NUMBER")}"
+  image_version = "1.0.0"
 }
 
 source "azure-arm" "ubuntu" {
@@ -37,7 +38,7 @@ source "azure-arm" "ubuntu" {
     subscription   = var.subscription_id
     resource_group = "1-7935f0a2-playground-sandbox"
     gallery_name   = "vsphere_gallery"
-    image_name     = "vsphere-ubuntu-image"
+    image_name     = "balaji"
     image_version  = local.image_version
     replication_regions = ["East US"]
   }
