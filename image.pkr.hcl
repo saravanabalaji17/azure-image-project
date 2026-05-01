@@ -47,8 +47,8 @@ source "azure-arm" "ubuntu" {
   subscription_id = var.subscription_id
 
   # Keep region consistent with your SIG
-  location = "East US"
-  vm_size  = "Standard_B2s"
+  location = ""
+  vm_size  = "Standard_B2ls_v2"
 
  # os_type         = "Linux"
  # image_publisher = "canonical"
