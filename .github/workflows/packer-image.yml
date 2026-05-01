@@ -3,12 +3,11 @@ name: Build Azure Image
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
 
 jobs:
   build-image:
     runs-on: ubuntu-latest
-
+	
     env:
       PACKER_LOG: "1"
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
@@ -16,7 +15,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
+		  
       - name: Install Packer
         uses: hashicorp/setup-packer@v3
         with:
@@ -29,7 +28,14 @@ jobs:
         run: packer init .
 
       - name: Packer Validate
-        run: packer validate .
+        run: |
+          packer validate \
+            -var "client_id=${{ secrets.ARM_CLIENT_ID }}" \
+            -var "client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
+            -var "tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+            -var "subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+            -var "image_version=1.0.${{ github.run_number }}" \
+            image.pkr.hcl
 
       - name: Build Image
         run: |
@@ -38,4 +44,5 @@ jobs:
             -var "client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
             -var "tenant_id=${{ secrets.ARM_TENANT_ID }}" \
             -var "subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+            -var "image_version=1.0.${{ github.run_number }}" \
             image.pkr.hcl
