@@ -47,7 +47,7 @@ source "azure-arm" "ubuntu" {
   subscription_id = var.subscription_id
 
   # Keep region consistent with your SIG
-  location = ""
+  location = "switzerlandnorth"
   vm_size  = "Standard_B2ls_v2"
 
  # os_type         = "Linux"
@@ -75,7 +75,7 @@ source "azure-arm" "ubuntu" {
     image_name     = "vsphere-ubuntu-image"
     image_version  = var.image_version
 
-    replication_regions = ["West US"]
+    replication_regions = ["Central India"]
   }
 
   # Optional but recommended
