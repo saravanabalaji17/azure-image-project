@@ -47,7 +47,7 @@ source "azure-arm" "ubuntu" {
   subscription_id = var.subscription_id
 
   # Keep region consistent with your SIG
-  location = "West US"
+  location = "East US"
   vm_size  = "Standard_B2s"
 
  # os_type         = "Linux"
@@ -64,15 +64,15 @@ source "azure-arm" "ubuntu" {
 # (24.04 sometimes fails in some regions → 22.04 is stable)
 
   # Temporary managed image
-  managed_image_resource_group_name = "1-7935f0a2-playground-sandbox"
+  managed_image_resource_group_name = "packer-rg"
   managed_image_name                = "temp-image-${var.image_version}"
 
   # Shared Image Gallery (SIG)
   shared_image_gallery_destination {
     subscription   = var.subscription_id
-    resource_group = "1-7935f0a2-playground-sandbox"
+    resource_group = "vsphere-rg"
     gallery_name   = "vsphere_gallery"
-    image_name     = "balaji"
+    image_name     = "vsphere-ubuntu-image"
     image_version  = var.image_version
 
     replication_regions = ["West US"]
