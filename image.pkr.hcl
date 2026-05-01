@@ -27,9 +27,9 @@ source "azure-arm" "ubuntu" {
   vm_size  = "Standard_B2s"
 
   os_type         = "Linux"
-  image_publisher = "Canonical"
-  image_offer     = "0001-com-ubuntu-server-focal"
-  image_sku       = "20_04-lts"
+  image_publisher = "canonical"
+  image_offer     = "ubuntu-24_04-lts"
+  image_sku       = "server"
 
   managed_image_resource_group_name = "packer-rg"
   managed_image_name                = "temp-image-${local.image_version}"
