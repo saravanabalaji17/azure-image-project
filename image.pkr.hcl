@@ -64,7 +64,7 @@ source "azure-arm" "ubuntu" {
 # (24.04 sometimes fails in some regions → 22.04 is stable)
 
   # Temporary managed image
-  managed_image_resource_group_name = "packer-rg"
+  managed_image_resource_group_name = "1-7935f0a2-playground-sandbox"
   managed_image_name                = "temp-image-${var.image_version}"
 
   # Shared Image Gallery (SIG)
