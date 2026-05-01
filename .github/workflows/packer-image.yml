@@ -1,0 +1,41 @@
+name: Build Azure Image
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+
+    env:
+      PACKER_LOG: "1"
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Packer
+        uses: hashicorp/setup-packer@v3
+        with:
+          version: "1.10.0"
+
+      - name: Install Ansible
+        run: sudo apt-get update && sudo apt-get install -y ansible
+
+      - name: Packer Init
+        run: packer init .
+
+      - name: Packer Validate
+        run: packer validate .
+
+      - name: Build Image
+        run: |
+          packer build \
+            -var "client_id=${{ secrets.ARM_CLIENT_ID }}" \
+            -var "client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
+            -var "tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+            -var "subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+            image.pkr.hcl
