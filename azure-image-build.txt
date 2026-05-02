@@ -1,0 +1,170 @@
+
+vsphere-automation-sp
+
+ARM_CLIENT_ID 	
+ARM_CLIENT_SECRET  
+ARM_SUBSCRIPTION_ID 
+ARM_TENANT_ID  
+
+
+=================================================================================
+ubuntu-machine:
+apt update
+
+apt install git
+
+#curl -sLS https://packages.microsoft.com/keys/microsoft.asc | \
+sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+
+#AZ_REPO=$(lsb_release -cs)
+
+#echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | \
+sudo tee /etc/apt/sources.list.d/azure-cli.list
+
+#sudo apt update
+#sudo apt install -y azure-cli
+
+az version
+
+az login 
+
+
+az ad sp create-for-rbac --name "my-sp" --role Contributor
+
+az ad sp create-for-rbac \
+  --name "my-sp" \
+  --role Contributor \
+  --scopes /subscriptions/<SUB_ID>/resourceGroups/<RG_NAME>
+  
+az role assignment create \
+  --assignee <APP_ID> \
+  --role Contributor \
+  --scope /subscriptions/<SUBSCRIPTION_ID>
+
+az role assignment list --assignee <client_id>
+
+az login --service-principal \
+  --username <APP_ID> \
+  --password <CLIENT_SECRET> \
+  --tenant <TENANT_ID>
+
+  
+az login --service-principal \
+  --username \
+  --password  \
+  --tenant 
+
+az account show --query user.name -o tsv
+az account show --query user.type -o tsv
+az account show --query name -o tsv
+
+az account show --output json
+
+az account set --subscription <SUBSCRIPTION_ID>
+
+az account show
+
+
+1.Create Resource Groups
+---------------------------
+az group create -n packer-rg -l switzerlandnorth
+az group create -n vsphere-rg -l switzerlandnorth
+
+az group show -n vsphere-rg
+
+delete:
+----------
+az group delete --name vsphere-rg --yes --no-wait
+az group delete --name packer-rg --yes --no-wait
+
+
+2.Create Azure Compute Gallery
+
+az sig create \
+  --resource-group vsphere-rg \
+  --gallery-name vsphere_gallery
+
+az sig show -g vsphere-rg -n vsphere_gallery
+
+ 3. Create Image Definition
+az sig image-definition create \
+  --resource-group vsphere-rg  \
+  --gallery-name vsphere_gallery \
+  --gallery-image-definition vsphere-ubuntu-image \
+  --publisher vspheretech \
+  --offer myOffer \
+  --sku ubuntu-22.04 \
+  --os-type Linux
+  
+  
+az sig image-definition show \
+  -g vsphere-rg \
+  --gallery-name vsphere_gallery \
+  --gallery-image-definition vsphere-ubuntu-image
+
+4. Create Service Principal
+
+az ad sp create-for-rbac --name vsphere-automation-sp --role contributor
+  
+  personal access tokens
+  
+  
+#git clone https://github.com/saravanabalaji17/azure-image-project.git
+  
+#vi image.pkr.hcl
+#mkdir -p .github/workflows
+ 
+#vi .github/workflows/packer-image.yml
+
+
+mkdir -p ansible/roles/common/tasks
+
+#vi ansible/playbook.yml
+
+
+#vi ansible/roles/common/tasks/main.yml
+- name: Install packages
+  apt:
+    name:
+      - nginx
+      - curl
+    state: present
+    update_cache: yes
+
+- name: Create config file
+  copy:
+    dest: /etc/myapp.conf
+    content: |
+      ENV=prod
+      VERSION=1.0
+
+- name: Enable nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+	
+	
+ git status
+ git add -A
+ git status
+ git commit -m "added packer + ansible pipeline"
+ 
+ git branch,   git checkout -b my-branch,git switch -c my-branch
+ git remote -v
+ 
+ git remote set-url origin git@github.com:saravanabalaji17/azure-image-project.git
+First-time push (set upstream)
+-----------------------------------
+git push -u origin my-branch
+
+
+
+
+
+  
+👉 https://github.com/settings/tokens/new
+
+
+git add . &&  git commit -m "added packer + ansible pipeline-6" && git push origin  
+===========================================================================================
